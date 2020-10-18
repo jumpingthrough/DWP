@@ -1,8 +1,10 @@
 package org.example.service;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.example.model.User;
 import org.example.ports.clients.UserClient;
 
@@ -21,14 +23,23 @@ public class UserService {
    */
   public List<User> getLondonUsers() {
     // Get Users from /users and filter those within 50 miles of London
+    CompletableFuture<List<User>> allUsersFuture =
+        client
+            .getAllUsers()
+            .thenApply(users ->
+              users.stream()
+                  .filter(filter50MilesFromLondon())
+                  .collect(Collectors.toList())
+            );
 
-    // Get Users from /city/{city}/users
-
-    // Join Lists and return
-
-    return Collections.emptyList();
+    // Join on the Futures, flatten the Lists and return
+    return Stream.of(allUsersFuture, client.getUserByCity("London"))
+        .map(CompletableFuture::join)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
   }
 
+  // TODO
   Predicate<User> filter50MilesFromLondon() {
     return (user) -> {
       return true;

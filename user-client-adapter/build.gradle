@@ -12,5 +12,13 @@ repositories {
 dependencies {
     implementation project(':core')
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.3"
+    implementation "org.slf4j:slf4j-simple:1.7.30"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.7.0"
+    testImplementation "com.github.tomakehurst:wiremock:2.27.2"
+}
+
+test {
+    useJUnitPlatform()
 }
