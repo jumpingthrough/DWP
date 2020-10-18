@@ -36,6 +36,7 @@ public class UserService {
     return Stream.of(allUsersFuture, client.getUserByCity("London"))
         .map(CompletableFuture::join)
         .flatMap(List::stream)
+        .distinct()
         .collect(Collectors.toList());
   }
 

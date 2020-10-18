@@ -3,6 +3,7 @@ package org.example.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class User {
 
@@ -60,4 +61,39 @@ public class User {
     return longitude;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return id == user.id &&
+        firstName.equals(user.firstName) &&
+        lastName.equals(user.lastName) &&
+        email.equals(user.email) &&
+        ipAddress.equals(user.ipAddress) &&
+        latitude.equals(user.latitude) &&
+        longitude.equals(user.longitude);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, email, ipAddress, latitude, longitude);
+  }
+
+  @Override
+  public String toString() {
+    return "User{" +
+        "id=" + id +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        ", email='" + email + '\'' +
+        ", ipAddress='" + ipAddress + '\'' +
+        ", latitude=" + latitude +
+        ", longitude=" + longitude +
+        '}';
+  }
 }
