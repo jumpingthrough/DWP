@@ -1,5 +1,6 @@
 package org.example.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -9,6 +10,10 @@ import org.example.model.User;
 import org.example.ports.clients.UserClient;
 
 public class UserService {
+
+  // Used a lat/long that references Westminster as the centre of London
+  private static final BigDecimal LONDON_LAT = new BigDecimal("51.494720");
+  private static final BigDecimal LONDON_LONG = new BigDecimal("-0.135278");
 
   private final UserClient client;
 
@@ -28,7 +33,7 @@ public class UserService {
             .getAllUsers()
             .thenApply(users ->
               users.stream()
-                  .filter(filter50MilesFromLondon())
+                  .filter(filter50MilesFrom(LONDON_LAT, LONDON_LONG))
                   .collect(Collectors.toList())
             );
 
@@ -40,11 +45,17 @@ public class UserService {
         .collect(Collectors.toList());
   }
 
-  // TODO
-  Predicate<User> filter50MilesFromLondon() {
-    return (user) -> {
-      return true;
-    };
+  /*
+   * Returns true if a User's lat/long are within 1 degree (roughly 60 miles) of a given lat/long.
+   * From the centre of London, that works out to around 40-50 miles from Central/Greater London
+   * as a whole.
+   */
+  Predicate<User> filter50MilesFrom(BigDecimal latitude, BigDecimal longitude) {
+    return (user) ->
+        (user.getLatitude().compareTo(latitude.subtract(new BigDecimal("1"))) >= 0
+            && user.getLatitude().compareTo(latitude.add(new BigDecimal("1"))) <= 0)
+            && (user.getLongitude().compareTo(longitude.subtract(new BigDecimal("1"))) >= 0
+            && user.getLongitude().compareTo(longitude.add(new BigDecimal("1"))) <= 0);
   }
 
 }
