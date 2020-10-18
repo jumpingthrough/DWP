@@ -1,0 +1,5 @@
+rootProject.name = 'LondonApi'
+include 'core'
+include 'user-client-adapter'
+include 'application-adapter'
+
